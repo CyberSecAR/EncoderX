@@ -1,0 +1,93 @@
+from tkinter import *
+import base64
+
+root = Tk()
+root.geometry('500x400')
+root.title("Text Encoding and Decoding")
+
+# Functions for Caesar Cipher Encoding and Decoding
+def Encode(key, message):
+    encoded_chars = []
+    for char in message:
+        encoded_char = chr((ord(char) + key) % 256)
+        encoded_chars.append(encoded_char)
+    encoded_message = ''.join(encoded_chars)
+    return base64.urlsafe_b64encode(encoded_message.encode()).decode()
+
+def Decode(key, message):
+    decoded_chars = []
+    message = base64.urlsafe_b64decode(message).decode()
+    for char in message:
+        decoded_char = chr((ord(char) - key) % 256)
+        decoded_chars.append(decoded_char)
+    decoded_message = ''.join(decoded_chars)
+    return decoded_message
+
+# Function to handle Encode Button click
+def EncodeButton():
+    try:
+        key = int(key_entry.get())
+        text = message_text.get("1.0", END).strip()
+        if text:
+            encoded_message = Encode(key, text)
+            result_text.delete("1.0", END)
+            result_text.insert("1.0", encoded_message)
+        else:
+            result_text.delete("1.0", END)
+            result_text.insert("1.0", "Enter text to encode")
+    except ValueError:
+        result_text.delete("1.0", END)
+        result_text.insert("1.0", "Key must be an integer")
+
+# Function to handle Decode Button click
+def DecodeButton():
+    try:
+        key = int(key_entry.get())
+        text = message_text.get("1.0", END).strip()
+        if text:
+            decoded_message = Decode(key, text)
+            result_text.delete("1.0", END)
+            result_text.insert("1.0", decoded_message)
+        else:
+            result_text.delete("1.0", END)
+            result_text.insert("1.0", "Enter text to decode")
+    except ValueError:
+        result_text.delete("1.0", END)
+        result_text.insert("1.0", "Key must be an integer")
+
+# Function to handle Reset Button click
+def ResetButton():
+    message_text.delete("1.0", END)
+    key_entry.delete(0, END)
+    result_text.delete("1.0", END)
+
+# Function to handle Exit Button click
+def ExitButton():
+    root.destroy()
+
+# GUI Layout
+Label(root, text="Text:").pack(pady=5)
+message_text = Text(root, height=4, width=50)
+message_text.pack()
+
+Label(root, text="Key:").pack(pady=5)
+key_entry = Entry(root, width=20)
+key_entry.pack()
+
+encode_button = Button(root, text="Encode", width=10, command=EncodeButton)
+encode_button.pack(pady=10)
+
+decode_button = Button(root, text="Decode", width=10, command=DecodeButton)
+decode_button.pack(pady=5)
+
+reset_button = Button(root, text="Reset", width=10, command=ResetButton)
+reset_button.pack(pady=5)
+
+exit_button = Button(root, text="Exit", width=10, command=ExitButton)
+exit_button.pack(pady=20)
+
+Label(root, text="Result:").pack(pady=5)
+result_text = Text(root, height=4, width=50)
+result_text.pack()
+
+root.mainloop()
